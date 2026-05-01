@@ -34,7 +34,8 @@ export default function Navbar() {
       document.addEventListener("mousedown", handleClickOutside);
     }
 
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    return () =>
+      document.removeEventListener("mousedown", handleClickOutside);
   }, [mobileOpen]);
 
   const handleNavClick = () => setMobileOpen(false);
@@ -42,8 +43,8 @@ export default function Navbar() {
   return (
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        scrolled
-          ? "bg-white/90 backdrop-blur-md shadow-sm py-3"
+        scrolled || mobileOpen
+          ? "bg-white/95 backdrop-blur-md shadow-sm py-3"
           : "bg-transparent py-5"
       }`}
     >
@@ -61,8 +62,10 @@ export default function Navbar() {
               key={link.href}
               href={link.href}
               className={`text-sm font-medium ${
-                scrolled ? "text-[#4a4a4a]" : "text-white"
-              } hover:text-[#c9a84c]`}
+                scrolled || mobileOpen
+                  ? "text-[#4a4a4a]"
+                  : "text-white"
+              } hover:text-[#c9a84c] transition-colors duration-300`}
             >
               {link.label}
             </a>
@@ -80,7 +83,7 @@ export default function Navbar() {
         <button
           onClick={() => setMobileOpen(!mobileOpen)}
           className={`md:hidden ${
-            scrolled ? "text-black" : "text-white"
+            scrolled || mobileOpen ? "text-black" : "text-white"
           }`}
         >
           {mobileOpen ? <X size={26} /> : <Menu size={26} />}
