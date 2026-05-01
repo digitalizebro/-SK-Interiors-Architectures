@@ -11,8 +11,16 @@ const navLinks = [
 ];
 
 export default function Navbar() {
+  const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+
+  // Scroll detection
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 50);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   // Close on outside click
   useEffect(() => {
@@ -33,7 +41,13 @@ export default function Navbar() {
   const handleNavClick = () => setMobileOpen(false);
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-white shadow-sm py-3">
+    <nav
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+        mobileOpen || scrolled
+          ? "bg-white shadow-sm py-3"
+          : "bg-transparent py-5"
+      }`}
+    >
       <div className="max-w-7xl mx-auto px-6 md:px-10 flex items-center justify-between">
         
         {/* LOGO */}
@@ -47,7 +61,9 @@ export default function Navbar() {
             <a
               key={link.href}
               href={link.href}
-              className="text-sm font-medium text-[#4a4a4a] hover:text-[#c9a84c] transition-colors duration-300"
+              className={`text-sm font-medium ${
+                scrolled ? "text-[#4a4a4a]" : "text-white"
+              } hover:text-[#c9a84c] transition-colors duration-300`}
             >
               {link.label}
             </a>
@@ -64,7 +80,9 @@ export default function Navbar() {
         {/* Mobile Button */}
         <button
           onClick={() => setMobileOpen(!mobileOpen)}
-          className="md:hidden text-black"
+          className={`md:hidden ${
+            mobileOpen || scrolled ? "text-black" : "text-white"
+          }`}
         >
           {mobileOpen ? <X size={26} /> : <Menu size={26} />}
         </button>
@@ -75,7 +93,7 @@ export default function Navbar() {
         <div className="fixed inset-0 bg-black/40 z-40" />
       )}
 
-      {/* MOBILE MENU */}
+      {/* MOBILE MENU PANEL */}
       <div
         ref={menuRef}
         className={`md:hidden fixed top-0 right-0 h-full w-[75%] max-w-sm bg-white z-50 shadow-xl transform transition-transform duration-300 ${
